@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Font from 'expo-font';
-import AppContainer from './app-container';
+import AppContainer from './src/app-container';
 import moment from 'moment';
 moment.locale('en');
 

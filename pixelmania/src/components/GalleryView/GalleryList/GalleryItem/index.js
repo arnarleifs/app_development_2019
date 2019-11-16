@@ -1,14 +1,14 @@
 import React from 'react';
 import { withNavigation } from 'react-navigation';
-import { TouchableOpacity } from 'react-native';
-import { View, Icon } from '@shoutem/ui';
+import { TouchableOpacity, View, Icon } from '@shoutem/ui';
 
-const GalleryItem = ({ name, onHold, onRemove, selected, children }) => (
+const GalleryItem = ({ name, onHold, onPress, onRemove, selected, children }) => (
     <TouchableOpacity
         style={{
             backgroundColor: 'white'
         }}
-        onLongPress={ () => onHold(name) }>
+        onLongPress={ () => onHold(name) }
+        onPress={ onPress }>
         {
             selected
             ?
