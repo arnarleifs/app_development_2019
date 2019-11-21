@@ -1,12 +1,11 @@
 import React from 'react';
-import { Spinner as UISpinner } from '@shoutem/ui';
+import { View, ActivityIndicator } from 'react-native';
+import styles from './styles';
 
-const styles = {
-    spinner: {
-        height: '100%',
-        width: '100%',
-        size: 'large'
-    }
-}
+const Spinner = () => (
+    <View style={ styles.spinner }>
+        <ActivityIndicator color="black" />
+    </View>
+);
 
-export default () => <UISpinner style={ styles.spinner } />;
+export default Spinner;

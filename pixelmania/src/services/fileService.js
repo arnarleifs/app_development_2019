@@ -1,5 +1,5 @@
 import * as FileSystem from 'expo-file-system';
-const imageDirectory = `${FileSystem.documentDirectory}/images`;
+const imageDirectory = `${FileSystem.documentDirectory}images`;
 
 const onException = (cb, errorHandler) => {
     try {
@@ -12,18 +12,9 @@ const onException = (cb, errorHandler) => {
     }
 }
 
-export const createFolder = async folderName => {
-    return await onException(() => FileSystem.makeDirectoryAsync(`${imageDirectory}/${folderName}`));
+export const cleanDirectory = async () => {
+    await FileSystem.deleteAsync(imageDirectory);
 }
-
-export const move = async (oldLocation, newLocation) => {
-    const result = await onException(() => FileSystem.moveAsync({
-        from: oldLocation,
-        to: newLocation
-    }));
-    console.log(result);
-    return result;
-};
 
 export const copyFile = async (file, newLocation) => {
     return await onException(() => FileSystem.copyAsync({
@@ -35,7 +26,13 @@ export const copyFile = async (file, newLocation) => {
 export const addImage = async imageLocation => {
     const folderSplit = imageLocation.split('/');
     const fileName = folderSplit[folderSplit.length - 1];
-    return await onException(() => copyFile(imageLocation, `${imageDirectory}/${fileName}`));
+    await onException(() => copyFile(imageLocation, `${imageDirectory}/${fileName}`));
+
+    return {
+        name: fileName,
+        type: 'image',
+        file: await loadImage(fileName)
+    };
 }
 
 export const remove = async name => {
@@ -48,19 +45,23 @@ export const loadImage = async fileName => {
     }));
 }
 
-export const getAllItems = async path => {
-    const result = await onException(() => FileSystem.readDirectoryAsync(`${imageDirectory}/${path}`));
+const setupDirectory = async () => {
+    const dir = await FileSystem.getInfoAsync(imageDirectory);
+    if (!dir.exists) {
+        await FileSystem.makeDirectoryAsync(imageDirectory);
+    }
+}
+
+export const getAllImages = async () => {
+    // Check if directory exists
+    await setupDirectory();
+
+    const result = await onException(() => FileSystem.readDirectoryAsync(imageDirectory));
     return Promise.all(result.map(async fileName => {
-        if (/\.(jpg|png|bmp)/g.test(fileName)) {
-            return {
-                name: fileName,
-                type: 'image',
-                file: await loadImage(fileName)
-            }
-        }
         return {
             name: fileName,
-            type: 'folder'
+            type: 'image',
+            file: await loadImage(fileName)
         };
     }));
 }
